@@ -37,3 +37,6 @@ coverage/
 
 # Vite preview (if you want to exclude)
 vite-preview/
+
+# Photos (large files, copy manually)
+public/photos/

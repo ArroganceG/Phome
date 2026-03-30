@@ -99,7 +99,14 @@ export default function Header() {
               )}
             </Link>
           ))}
-        </nav>
+        <Link
+              key="/admin"
+              to="/admin"
+              className="font-body text-sm tracking-wide transition-colors duration-300 text-gray-600 hover:text-primary-600"
+            >
+              管理
+            </Link>
+          </nav>
 
         <button
           className="md:hidden p-2 text-primary-700"

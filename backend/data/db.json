@@ -1,0 +1,40 @@
+{
+  "photos": [
+    {
+      "id": "7163609f-2a37-4129-9832-933fd4787e00",
+      "title": "IMG01062",
+      "description": "",
+      "category": "作品",
+      "src": "/uploads/6bc6bc9d-163d-42a8-b595-d4f3dd1b62ce.jpeg",
+      "date": "2026-03-30",
+      "createdAt": "2026-03-30T02:26:21.805Z"
+    },
+    {
+      "id": "fd4a5a00-16ea-4e79-8e79-f7f407da7a23",
+      "title": "Test Photo",
+      "description": "",
+      "category": "作品",
+      "src": "http://localhost:3001/uploads/53dcd516-c7b0-403f-bf7e-e8a1f2dc7797.png",
+      "date": "2026-03-30",
+      "createdAt": "2026-03-30T02:18:31.897Z"
+    }
+  ],
+  "categories": [
+    "全部",
+    "运动",
+    "课堂",
+    "师生",
+    "趣味活动",
+    "日常",
+    "作品",
+    "未分类"
+  ],
+  "users": [
+    {
+      "id": "default-admin",
+      "username": "admin",
+      "password": "$2b$10$9fycwjPjGG9NukANhGBa4u2/E73VIPM7ithm/9BCSmPHXOdYp7uhG",
+      "createdAt": "2026-03-30T02:09:15.603Z"
+    }
+  ]
+}

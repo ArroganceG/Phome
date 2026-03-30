@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { photos, categories } from '../data/photos'
+import { loadPhotos, getCategories } from '../services/photoStorage'
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const PhotoCard = ({ photo, index, onClick }) => {
   const ref = useRef(null)
@@ -77,7 +79,7 @@ const Lightbox = ({ photo, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <img
-          src={photo.src.replace('w=800', 'w=1600')}
+          src={photo.src}
           alt={photo.title}
           className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
         />
@@ -98,14 +100,48 @@ const Lightbox = ({ photo, onClose }) => {
 }
 
 export default function Gallery() {
+  const [photos, setPhotos] = useState([])
+  const [categories, setCategories] = useState([])
   const [activeCategory, setActiveCategory] = useState('全部')
   const [selectedPhoto, setSelectedPhoto] = useState(null)
+  const [loading, setLoading] = useState(true)
   const headerRef = useRef(null)
   const isHeaderInView = useInView(headerRef, { once: true })
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [photosData, categoriesData] = await Promise.all([
+          loadPhotos(),
+          getCategories()
+        ])
+        const sortedPhotos = [...photosData].sort((a, b) => {
+          const dateA = a.createdAt || a.date || ''
+          const dateB = b.createdAt || b.date || ''
+          return dateB.localeCompare(dateA)
+        })
+        setPhotos(sortedPhotos)
+        setCategories(categoriesData)
+      } catch (error) {
+        console.error('Failed to load data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   const filteredPhotos = activeCategory === '全部'
     ? photos
     : photos.filter(p => p.category === activeCategory)
+
+  if (loading) {
+    return (
+      <div className="pt-20 min-h-screen bg-gradient-to-b from-primary-50/50 to-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
+      </div>
+    )
+  }
 
   return (
     <div className="pt-20 min-h-screen bg-gradient-to-b from-primary-50/50 to-white">

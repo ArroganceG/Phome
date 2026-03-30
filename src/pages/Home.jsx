@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { loadPhotos } from '../services/photoStorage'
 
 const FloatingLeaf = ({ delay = 0, x = 0 }) => (
   <motion.div
@@ -89,6 +90,26 @@ const PhotoCard = ({ photo, index }) => {
 export default function Home() {
   const heroRef = useRef(null)
   const isHeroInView = useInView(heroRef, { once: true })
+  const [recentPhotos, setRecentPhotos] = useState([])
+  const [photoCount, setPhotoCount] = useState(50)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const allPhotos = await loadPhotos()
+        const sorted = [...allPhotos].sort((a, b) => {
+          const dateA = a.createdAt || a.date || ''
+          const dateB = b.createdAt || b.date || ''
+          return dateB.localeCompare(dateA)
+        }).slice(0, 6)
+        setRecentPhotos(sorted)
+        setPhotoCount(allPhotos.length)
+      } catch (error) {
+        console.error('Failed to load photos:', error)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
     <div className="pt-16">
@@ -186,7 +207,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
             <StatCard number={3} suffix="年+" label="拍摄经验" />
-            <StatCard number={50} suffix="+" label="作品数量" />
+            <StatCard number={photoCount} suffix="+" label="作品数量" />
             <StatCard number={20} suffix="+" label="学校合作" />
             <StatCard number={1000} suffix="+" label="快乐瞬间" />
           </div>
@@ -212,14 +233,10 @@ export default function Home() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[0, 1, 2, 3, 4, 5].map((index) => (
+            {recentPhotos.map((photo, index) => (
               <PhotoCard
-                key={index}
-                photo={{
-                  id: index + 1,
-                  title: ['晨光中的早读', '操场上的笑声', '老师的温柔', '美术课上的专注', '运动会的拼搏', '午餐时间的欢乐'][index],
-                  src: `https://images.unsplash.com/photo-${index === 0 ? '1503676260728-1c00da094a0b' : index === 1 ? '1503454537195-1dcabb73ffb9' : index === 2 ? '1544717297-fa95b6ee9643' : index === 3 ? '1502086223501-7ea6ecd79368' : index === 4 ? '1574629810360-7efbbe195018' : '1567521464027-f127ff144326'}?w=800&q=80`,
-                }}
+                key={photo.id}
+                photo={photo}
                 index={index}
               />
             ))}
